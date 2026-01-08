@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biology Practical - Class 12</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Galada&family=Hind+Siliguri:wght@300;400;600&display=swap');
+        /* Google Fonts for Book-like feel */
+        @import url('https://fonts.googleapis.com/css2?family=Galada&family=Hind+Siliguri:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&display=swap');
 
         /* Global Reset */
         * { box-sizing: border-box; }
@@ -14,22 +15,22 @@
             margin: 0;
             padding: 0;
             font-family: 'Hind Siliguri', sans-serif;
-            background-color: #eef2f3;
-            -webkit-user-select: none; /* Block Text Selection */
+            background-color: #525659; /* PDF Viewer Background Color */
+            -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            overflow-x: hidden;
         }
 
-        /* Login Screen */
+        /* --- LOGIN SCREEN --- */
         #login-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #000428 0%, #004e92 100%);
+            background: linear-gradient(135deg, #141E30 0%, #243B55 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -42,158 +43,192 @@
 
         #login-screen h1 {
             font-family: 'Galada', cursive;
-            font-size: clamp(1.5rem, 5vw, 2.5rem); /* Responsive Font Size */
+            font-size: clamp(1.8rem, 5vw, 3rem);
             margin-bottom: 10px;
-            color: #ffd700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            line-height: 1.4;
-            max-width: 90%;
+            color: #FFD700;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
         #login-screen h2 {
             font-size: 1.2rem;
             margin-bottom: 30px;
             font-weight: 300;
+            letter-spacing: 1px;
             background: rgba(255,255,255,0.1);
-            padding: 5px 15px;
-            border-radius: 20px;
+            padding: 8px 20px;
+            border-radius: 50px;
         }
 
         .input-group {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 25px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.18);
         }
 
         input[type="password"] {
             padding: 12px;
             font-size: 18px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             outline: none;
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             width: 100%;
             display: block;
+            background: rgba(255,255,255,0.9);
         }
 
         button#view-btn {
-            background-color: #ffd700;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
             color: #000;
             border: none;
             padding: 12px 40px;
             font-size: 18px;
             font-weight: bold;
-            border-radius: 50px;
+            border-radius: 8px;
             cursor: pointer;
             width: 100%;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+            transition: transform 0.1s;
         }
+        button#view-btn:active { transform: scale(0.98); }
 
-        /* Content Area */
+        /* --- CONTENT AREA (BOOK STYLE) --- */
         #content-area {
             display: none;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 15px;
+            max-width: 900px; /* A4 Ratio width approx */
+            margin: 20px auto;
+            padding: 0 10px;
         }
 
-        /* Page Design (Like PDF) */
+        /* The Page Card */
         .page {
-            background: white;
+            background-color: #fff;
             width: 100%;
-            min-height: 100vh;
+            min-height: 100vh; /* Mimic A4 Height */
             margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            padding: 40px;
-            border-radius: 2px;
+            padding: 50px; /* Page Margins */
             position: relative;
-            overflow: hidden; /* Keeps content inside */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); /* Lifted paper effect */
+            overflow: hidden;
         }
 
-        /* USER WATERMARK (AYAN) */
+        /* WATERMARK */
         .ayan-watermark {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 120px;
-            font-weight: bold;
-            color: rgba(0, 0, 0, 0.05); /* Very light grey */
+            font-size: 150px;
+            font-weight: 900;
+            color: rgba(0, 0, 0, 0.04);
             pointer-events: none;
             z-index: 0;
             white-space: nowrap;
-            font-family: sans-serif;
+            font-family: 'Arial Black', sans-serif;
             text-transform: uppercase;
         }
 
-        /* Image Container */
-        .img-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-            z-index: 1;
-            position: relative;
+        /* Security Overlay (Blur effect) */
+        .security-overlay {
+            display: none; /* Active via JS */
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+            z-index: 100;
         }
 
-        .img-container img {
-            max-width: 100%;
-            height: auto;
-            border: 2px solid #333;
-            pointer-events: none;
-        }
-
-        /* Text Content */
-        .text-content {
-            font-size: 16px;
-            line-height: 1.6;
-            color: #000;
-            position: relative;
-            z-index: 1;
-        }
-
+        /* Content Typography */
         .topic-header {
             text-align: center;
-            border-bottom: 2px solid #000;
+            border-bottom: 3px double #333;
             padding-bottom: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 1;
         }
         
         .topic-header h2 {
             margin: 0;
             color: #000;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
+            font-family: 'Merriweather', serif; /* Bookish heading font */
         }
 
-        /* Lists */
-        p { font-weight: bold; margin-bottom: 5px; }
-        
+        /* Image Styling */
+        .img-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 25px;
+            z-index: 1;
+            position: relative;
+            padding: 10px;
+            border: 1px solid #eee;
+            background: #fdfdfd;
+        }
+
+        .img-container img {
+            max-width: 100%;
+            max-height: 600px;
+            border: 1px solid #000;
+            pointer-events: none;
+        }
+
+        /* Text Styling */
+        .text-content {
+            font-size: 17px;
+            line-height: 1.7; /* Good readability */
+            color: #222;
+            position: relative;
+            z-index: 1;
+            text-align: justify; /* Justified text like books */
+        }
+
+        /* Section Headings */
+        .section-title {
+            font-weight: 700;
+            color: #1a1a1a;
+            font-family: 'Merriweather', serif;
+            margin-top: 20px;
+            margin-bottom: 5px;
+            display: inline-block;
+            border-bottom: 1px dashed #666;
+        }
+
+        /* List Styling */
         ul { list-style-type: none; padding: 0; margin-top: 5px; }
         
         li {
             margin-bottom: 8px;
             position: relative;
             padding-left: 25px;
-            text-align: justify;
         }
         
         li::before {
-            content: "➤"; /* Arrow bullet */
+            content: "➤";
             position: absolute;
             left: 0;
-            font-size: 14px;
-            top: 4px;
+            top: 5px;
+            font-size: 12px;
+            color: #444;
         }
 
-        /* Mobile Fixes */
+        /* Mobile Adjustments */
         @media (max-width: 600px) {
-            .page { padding: 20px; min-height: auto; }
-            .ayan-watermark { font-size: 60px; }
+            .page { padding: 25px; min-height: auto; }
+            .ayan-watermark { font-size: 70px; }
+            #login-screen h1 { font-size: 1.8rem; }
+            .topic-header h2 { font-size: 1.4rem; }
+        }
+
+        /* Print Hiding */
+        @media print {
+            body { display: none; }
         }
     </style>
 </head>
@@ -201,12 +236,12 @@
 
     <div id="login-screen">
         <h1>গোপালনগর আশুতোষ উচ্চমাধ্যমিক বিদ্যালয়</h1>
-        <h2>ক্লাস 12 বায়োলজি প্রাকটিক্যাল</h2>
+        <h2>Class 12 Biology Practical</h2>
         <div class="input-group">
             <input type="password" id="passkey" placeholder="Enter Passkey">
             <button id="view-btn" onclick="checkPass()">View Practical</button>
         </div>
-        <p style="font-size: 10px; margin-top: 30px; opacity: 0.5;">Secure View • No Screenshots</p>
+        <p style="font-size: 11px; margin-top: 25px; color: #aaa; letter-spacing: 1px;">SECURE DOCUMENT VIEWER • DO NOT DISTRIBUTE</p>
     </div>
 
     <div id="content-area">
@@ -214,15 +249,18 @@
         <div class="page">
             <div class="ayan-watermark">AYAN</div>
             <div class="img-container">
-                <img src="images/ascaris.jpg" alt="Ascaris">
+                <img src="ascaris.jpg" alt="Ascaris">
             </div>
         </div>
         <div class="page">
             <div class="ayan-watermark">AYAN</div>
             <div class="text-content">
-                <div class="topic-header"><h2>১. অ্যাসকারিস (Ascaris) / গোলকৃমি</h2></div>
-                <p>বিষয়: গোলকৃমির (Ascaris lumbricoides) পুরুষ ও স্ত্রী প্রাণীর সনাক্তকরণ।</p>
-                <p>সনাক্তকারী বৈশিষ্ট্য:</p>
+                <div class="topic-header"><h2>1. অ্যাসকারিস (Ascaris) / গোলকৃমি</h2></div>
+                
+                <div class="section-title">ভূমিকা:</div>
+                <p>গোলকৃমি বা <i>Ascaris lumbricoides</i> হলো মানুষের ক্ষুদ্রান্ত্রে বসবাসকারী এক প্রকার অন্তঃপরজীবী প্রাণী। এরা অ্যাসকারিয়েসিস নামক রোগ সৃষ্টি করে এবং বিশ্বজুড়ে, বিশেষ করে উষ্ণ ও আর্দ্র অঞ্চলে এদের প্রাদুর্ভাব বেশি দেখা যায়।</p>
+
+                <div class="section-title">সনাক্তকারী বৈশিষ্ট্য:</div>
                 <ul>
                     <li>দেহ নলাকার বা বেলনাকার, লম্বা এবং দু’প্রান্ত ক্রমশ সরু।</li>
                     <li>গায়ের রং হালকা হলুদ বা গোলাপি আভাযুক্ত সাদা।</li>
@@ -236,15 +274,18 @@
         <div class="page">
             <div class="ayan-watermark">AYAN</div>
             <div class="img-container">
-                <img src="images/cactus.jpg" alt="Cactus">
+                <img src="cactus.jpg" alt="Cactus">
             </div>
         </div>
         <div class="page">
             <div class="ayan-watermark">AYAN</div>
             <div class="text-content">
-                <div class="topic-header"><h2>২. ক্যাকটাস (Cactus) / জাঙ্গল উদ্ভিদের অভিযোজন</h2></div>
-                <p>বিষয়: জাঙ্গল উদ্ভিদ বা জেরোফাইট (Xerophyte) হিসেবে ফনিমনসার (Opuntia) অভিযোজনগত বৈশিষ্ট্য।</p>
-                <p>সনাক্তকারী বৈশিষ্ট্য:</p>
+                <div class="topic-header"><h2>2. ক্যাকটাস (Cactus) / জাঙ্গল উদ্ভিদের অভিযোজন</h2></div>
+                
+                <div class="section-title">ভূমিকা:</div>
+                <p>ফনিমনসা বা <i>Opuntia</i> হলো ক্যাকটাস জাতীয় এক ধরণের জাঙ্গল উদ্ভিদ বা জেরোফাইট। মরুভূমি বা শুষ্ক অঞ্চলের জলের অভাব সহ্য করার জন্য এদের দেহে বিশেষ ধরণের গঠনগত পরিবর্তন বা অভিযোজন লক্ষ্য করা যায়।</p>
+
+                <div class="section-title">সনাক্তকারী বৈশিষ্ট্য:</div>
                 <ul>
                     <li>এদের কাণ্ডটি চ্যাপ্টা, রসালো ও সবুজ রঙের পাতার মতো দেখতে, যাকে পর্ণকাণ্ড (Phylloclade) বলে। এটি সালোকসংশ্লেষ করে ও জল সঞ্চয় করে রাখে।</li>
                     <li>বাষ্পমোচন রোধ করার জন্য পাতাগুলি কাঁটায় রূপান্তরিত হয়েছে।</li>
@@ -257,15 +298,18 @@
         <div class="page">
             <div class="ayan-watermark">AYAN</div>
             <div class="img-container">
-                <img src="images/double_fertilization.jpg" alt="Double Fertilization">
+                <img src="double_fertilization.jpg" alt="Double Fertilization">
             </div>
         </div>
         <div class="page">
             <div class="ayan-watermark">AYAN</div>
             <div class="text-content">
-                <div class="topic-header"><h2>৩. সপুষ্পক উদ্ভিদের দ্বিনিষেক (Double Fertilization)</h2></div>
-                <p>বিষয়: সপুষ্পক উদ্ভিদের দ্বিনিষেক প্রক্রিয়ার সংক্ষেপে বর্ণনা।</p>
-                <p>পদ্ধতি/বৈশিষ্ট্য:</p>
+                <div class="topic-header"><h2>3. সপুষ্পক উদ্ভিদের দ্বিনিষেক (Double Fertilization)</h2></div>
+                
+                <div class="section-title">ভূমিকা:</div>
+                <p>সপুষ্পক উদ্ভিদের যৌন জননের একটি অত্যন্ত গুরুত্বপূর্ণ ও অনন্য বৈশিষ্ট্য হলো দ্বিনিষেক। এই প্রক্রিয়ায় একই সাথে দুটি পুং-গ্যামেট যথাক্রমে ডিম্বাণু এবং নির্ণীত নিউক্লিয়াসের সাথে মিলিত হয়ে জাইগোট ও শস্য গঠন করে।</p>
+
+                <div class="section-title">পদ্ধতি/বৈশিষ্ট্য:</div>
                 <ul>
                     <li>সপুষ্পক উদ্ভিদে দুটি পুং-গ্যামেট পরাগনালীর মাধ্যমে ভ্রুণস্থলীতে প্রবেশ করে।</li>
                     <li>একটি পুং-গ্যামেট ডিম্বাণুর সাথে মিলিত হয়ে জাইগোট (2n) গঠন করে। একে সিনগ্যামি (Syngamy) বলে।</li>
@@ -278,14 +322,18 @@
         <div class="page">
             <div class="ayan-watermark">AYAN</div>
             <div class="img-container">
-                <img src="images/testis.jpg" alt="Testis">
+                <img src="testis.jpg" alt="Testis">
             </div>
         </div>
         <div class="page">
             <div class="ayan-watermark">AYAN</div>
             <div class="text-content">
-                <div class="topic-header"><h2>৪. (ক) স্তন্যপায়ী শুক্রাশয়ের প্রস্থচ্ছেদ (T.S. of Testis)</h2></div>
-                <p>সনাক্তকারী বৈশিষ্ট্য:</p>
+                <div class="topic-header"><h2>4(a). স্তন্যপায়ী শুক্রাশয়ের প্রস্থচ্ছেদ (T.S. of Testis)</h2></div>
+                
+                <div class="section-title">ভূমিকা:</div>
+                <p>শুক্রাশয় হলো পুরুষদের প্রধান জননঙ্গ যা স্ক্রোটাম থলির মধ্যে অবস্থিত। এটি একদিকে যেমন শুক্রাণু উৎপাদন করে, তেমনি টেস্টোস্টেরন নামক হরমোন নিঃসরণ করে পুরুষের গৌণ যৌন বৈশিষ্ট্য প্রকাশে সাহায্য করে।</p>
+
+                <div class="section-title">সনাক্তকারী বৈশিষ্ট্য:</div>
                 <ul>
                     <li>প্রস্থচ্ছেদে অসংখ্য গোলাকার বা ডিম্বাকার সেমিনিফেরাস নালিকা (Seminiferous tubules) দেখা যায়।</li>
                     <li>নালিকাগুলোর মাঝে মাঝে লেডিগ-এর আন্তরকোশ (Leydig cells) গুচ্ছাকারে থাকে।</li>
@@ -298,14 +346,18 @@
         <div class="page">
             <div class="ayan-watermark">AYAN</div>
             <div class="img-container">
-                <img src="images/ovary.jpg" alt="Ovary">
+                <img src="ovary.jpg" alt="Ovary">
             </div>
         </div>
         <div class="page">
             <div class="ayan-watermark">AYAN</div>
             <div class="text-content">
-                <div class="topic-header"><h2>৪. (খ) স্তন্যপায়ী ডিম্বাশয়ের প্রস্থচ্ছেদ (T.S. of Ovary)</h2></div>
-                <p>সনাক্তকারী বৈশিষ্ট্য:</p>
+                <div class="topic-header"><h2>4(b). স্তন্যপায়ী ডিম্বাশয়ের প্রস্থচ্ছেদ (T.S. of Ovary)</h2></div>
+                
+                <div class="section-title">ভূমিকা:</div>
+                <p>ডিম্বাশয় হলো স্ত্রীদেহের প্রধান জননঙ্গ যা জরায়ুর দুই পাশে অবস্থান করে। এটি ডিম্বাণু উৎপাদন করার পাশাপাশি ইস্ট্রোজেন ও প্রোজেস্টেরন হরমোন নিঃসরণ করে স্ত্রীদেহের মাসিক চক্র ও গর্ভাবস্থা নিয়ন্ত্রণ করে।</p>
+
+                <div class="section-title">সনাক্তকারী বৈশিষ্ট্য:</div>
                 <ul>
                     <li>ডিম্বাশয়টি বাইরে জার্মিনাল এপিথেলিয়াম এবং টিউনিকা অ্যালবুজিনিয়া নামক আবরণে ঢাকা।</li>
                     <li>এর ভেতরের অংশটি কর্টেক্স ও মেডালা—এই দুই ভাগে বিভক্ত।</li>
@@ -318,15 +370,18 @@
         <div class="page">
             <div class="ayan-watermark">AYAN</div>
             <div class="img-container">
-                <img src="images/sperm.jpg" alt="Sperm">
+                <img src="sperm.jpg" alt="Sperm">
             </div>
         </div>
         <div class="page">
             <div class="ayan-watermark">AYAN</div>
             <div class="text-content">
-                <div class="topic-header"><h2>৫. শুক্রাণু (Human Sperm)</h2></div>
-                <p>বিষয়: মানুষের শুক্রাণুর গঠন।</p>
-                <p>সনাক্তকারী বৈশিষ্ট্য:</p>
+                <div class="topic-header"><h2>5. শুক্রাণু (Human Sperm)</h2></div>
+                
+                <div class="section-title">ভূমিকা:</div>
+                <p>শুক্রাণু হলো পুং-জননতন্ত্রে উৎপন্ন হ্যাপ্লয়েড (n) ক্রোমোজোম বিশিষ্ট পুং-গ্যামেট। এটি একটি সচল ও সূক্ষ্ম কোষ যা স্ত্রী-গ্যামেট বা ডিম্বাণুর সাথে মিলিত হয়ে নিষেক ক্রিয়া সম্পন্ন করে।</p>
+
+                <div class="section-title">সনাক্তকারী বৈশিষ্ট্য:</div>
                 <ul>
                     <li>শুক্রাণুর দেহটি চারটি প্রধান অংশে বিভক্ত—মস্তক (Head), গ্রীবা (Neck), মধ্যখণ্ড (Middle piece) এবং লেজ (Tail)।</li>
                     <li>মস্তকে হ্যাপ্লয়েড নিউক্লিয়াস থাকে এবং এর অগ্রভাগে টুপির মতো অ্যাক্রোজোম (Acrosome) থাকে।</li>
@@ -339,15 +394,18 @@
         <div class="page">
             <div class="ayan-watermark">AYAN</div>
             <div class="img-container">
-                <img src="images/hiv.jpg" alt="HIV">
+                <img src="hiv.jpg" alt="HIV">
             </div>
         </div>
         <div class="page">
             <div class="ayan-watermark">AYAN</div>
             <div class="text-content">
-                <div class="topic-header"><h2>৬. HIV-র গঠন</h2></div>
-                <p>বিষয়: HIV ভাইরাসের গঠন।</p>
-                <p>সনাক্তকারী বৈশিষ্ট্য:</p>
+                <div class="topic-header"><h2>6. HIV-র গঠন</h2></div>
+                
+                <div class="section-title">ভূমিকা:</div>
+                <p>HIV (Human Immunodeficiency Virus) হলো একটি লেন্টিভাইরাস গোত্রভুক্ত রেট্রোভাইরাস যা মানুষের রোগ প্রতিরোধ তন্ত্রকে আক্রমণ করে। এর সংক্রমণের ফলে শরীরের অনাক্রম্যতা কমে যায় এবং কালক্রমে এটি এইডস (AIDS) রোগের কারণ হয়ে দাঁড়ায়।</p>
+
+                <div class="section-title">সনাক্তকারী বৈশিষ্ট্য:</div>
                 <ul>
                     <li>এটি একটি গোলাকার রেট্রোভাইরাস (Retrovirus)।</li>
                     <li>বাইরের আবরণে লিপিড দ্বি-স্তর থাকে এবং এতে গ্লাইকোপ্রোটিন কাঁটা (gp120 ও gp41) থাকে।</li>
@@ -360,19 +418,22 @@
         <div class="page">
             <div class="ayan-watermark">AYAN</div>
             <div class="img-container">
-                <img src="images/micropropagation.jpg" alt="Micropropagation">
+                <img src="micropropagation.jpg" alt="Micropropagation">
             </div>
         </div>
         <div class="page">
             <div class="ayan-watermark">AYAN</div>
             <div class="text-content">
-                <div class="topic-header"><h2>৭. মাইক্রোপ্রোপাগেশন (Micropropagation)</h2></div>
-                <p>বিষয়: উদ্ভিদ কলাকর্ষণ বা মাইক্রোপ্রোপাগেশন পদ্ধতির পর্যায়ক্রম।</p>
-                <p>পদ্ধতি:</p>
+                <div class="topic-header"><h2>7. মাইক্রোপ্রোপাগেশন (Micropropagation)</h2></div>
+                
+                <div class="section-title">ভূমিকা:</div>
+                <p>মাইক্রোপ্রোপাগেশন বা অণুবিস্তারণ হলো উদ্ভিদ কলাকর্ষণ বা টিস্যু কালচারের একটি আধুনিক পদ্ধতি। এই পদ্ধতিতে উদ্ভিদের ক্ষুদ্র অংশ বা এক্সপ্ল্যান্ট থেকে পরীক্ষাগারে নিয়ন্ত্রিত পরিবেশে অতি দ্রুত হাজার হাজার নতুন চারাগাছ উৎপাদন করা সম্ভব।</p>
+
+                <div class="section-title">পদ্ধতি:</div>
                 <ul>
                     <li>এক্সপ্ল্যান্ট নির্বাচন: রোগমুক্ত ও সতেজ উদ্ভিদাংশ (যেমন মুকুল) নেওয়া হয়।</li>
                     <li>কালচার মিডিয়াম ও স্টেরিলাইজেশন: এক্সপ্ল্যান্টটিকে জীবাণুমুক্ত করে পুষ্টি মাধ্যমে রাখা হয়।</li>
-                    <li>ক্যালাস গঠন: কোশ বিভাজনের ফলে অবিন্যস্ত কোশগুচ্ছ বা ক্যালাস (Callus) তৈরি হয়।</li>
+                    <li>ক্যালাস গঠন: কোশ বিভাজনে অবিন্যস্ত কোশগুচ্ছ বা ক্যালাস (Callus) তৈরি হয়।</li>
                     <li>এমব্রায়য়েড বা প্ল্যান্টলেট গঠন: হরমোন প্রয়োগের ফলে ক্যালাস থেকে মূল ও কাণ্ডসহ ছোট চারাগাছ (Plantlet) তৈরি হয়।</li>
                     <li>হার্ডেনিং ও স্থানান্তর: চারাগাছগুলোকে প্রথমে গ্রিনহাউসে ও পরে টবে বা মাটিতে স্থানান্তর করা হয়।</li>
                 </ul>
@@ -385,31 +446,39 @@
         // Disable Right Click
         document.addEventListener('contextmenu', event => event.preventDefault());
 
-        // Disable Screenshots/Copy Keys
+        // Block Key Combinations
         document.onkeydown = function(e) {
             if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 85 || e.keyCode === 117 || e.keyCode === 83 || e.keyCode === 80)) {
-                alert('Downloading is restricted for Security! 🔒');
+                alert('🚫 Security Alert: Printing or Saving is disabled!');
                 return false;
             }
             if(e.key == "PrintScreen") {
-                alert("Screenshots are disabled! 🚫");
-                // Attempt to clear clipboard (works in some browsers)
+                alert("🚫 Security Alert: Screenshots are blocked!");
                 navigator.clipboard.writeText(''); 
                 return false;
             }
         };
 
+        // Window Blur Effect (Optional: Blurs content if user switches tabs/apps)
+        window.onblur = function() {
+            document.title = "Security Alert!";
+        }
+        window.onfocus = function() {
+            document.title = "Biology Practical - Class 12";
+        }
+
+        // Login Logic
         function checkPass() {
             var pass = document.getElementById('passkey').value;
             if(pass === "BIOLOGY") {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('content-area').style.display = 'block';
-                // Try to go full screen on mobile
+                // Trigger Fullscreen
                 if (document.documentElement.requestFullscreen) {
                     document.documentElement.requestFullscreen();
                 }
             } else {
-                alert("Wrong Passkey! 😡");
+                alert("Incorrect Passkey! 😡");
                 document.getElementById('passkey').value = "";
             }
         }
