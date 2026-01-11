@@ -107,6 +107,11 @@
         .modal-title { font-size: 18px; font-weight: bold; margin-bottom: 20px; color: #333; }
         .close-btn { position: absolute; top: 10px; right: 15px; font-size: 20px; cursor: pointer; color: #aaa; }
         
+        .request-link {
+            display: block; margin-top: 15px; color: #1e3c72; text-decoration: underline;
+            font-size: 14px; cursor: pointer; font-weight: bold;
+        }
+
         /* --- CONTENT & STYLES --- */
         #content-area { display: none; max-width: 900px; margin: 30px auto; padding: 0 15px; }
         .page {
@@ -169,34 +174,29 @@
         <p>Spamming Activity Detected.</p>
         <div id="timer">Loading...</div>
         <p style="margin-top:20px; font-size:12px; color:#555;">Try again in 24 Hours.</p>
-        <button class="help-btn" onclick="openHelpMain()">Help / Support ❓</button>
+        <button class="help-btn" onclick="openCodeForm()">Help / Support ❓</button>
     </div>
 
-    <div id="help-modal" class="modal">
+    <div id="code-modal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('help-modal')">&times;</span>
-            <div class="modal-title">Select an Option</div>
-            <button onclick="openRequestForm()" style="margin-bottom:15px; background:#1e3c72; color:white;">Request Unblock 📝</button>
-            <button onclick="openCodeForm()" style="background:#333; border:1px solid #555;">Enter 4-Digit Code 🔑</button>
+            <span class="close-btn" onclick="closeModal('code-modal')">&times;</span>
+            <div class="modal-title">Unblock Device</div>
+            
+            <input type="number" id="admin-code" placeholder="Enter Unblock Code" style="border:1px solid #ccc; letter-spacing: 5px; font-weight: bold;">
+            <button onclick="submitCode()" style="background:#d4a017; color:black;">Unblock Now 🔓</button>
+
+            <span class="request-link" onclick="openRequestForm()">Don't have a code? Request Here</span>
         </div>
     </div>
 
     <div id="request-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal('request-modal')">&times;</span>
-            <div class="modal-title">Unblock Request</div>
-            <input type="text" id="req-name" placeholder="Original Name" style="border:1px solid #ccc;">
+            <div class="modal-title">Request Unblock Code</div>
+            <p style="font-size:12px; color:#666; margin-bottom:15px;">The code will be sent to Admin.</p>
+            <input type="text" id="req-name" placeholder="Your Name" style="border:1px solid #ccc;">
             <input type="number" id="req-mobile" placeholder="Mobile Number" style="border:1px solid #ccc;">
-            <button onclick="submitRequest()" style="background:#28a745;">Submit Request ✅</button>
-        </div>
-    </div>
-
-    <div id="code-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal('code-modal')">&times;</span>
-            <div class="modal-title">Admin Unblock Code</div>
-            <input type="number" id="admin-code" placeholder="Enter 4-Digit Code" style="border:1px solid #ccc; letter-spacing: 5px; font-weight: bold;">
-            <button onclick="submitCode()" style="background:#d4a017; color:black;">Unblock Now 🔓</button>
+            <button onclick="submitRequest()" style="background:#28a745;">Submit & Get Code 📩</button>
         </div>
     </div>
 
@@ -233,7 +233,7 @@
                 <div class="text-content">
                     <div class="section-title">ভূমিকা:</div>
                     <p>গোলকৃমি বা <i>Ascaris lumbricoides</i> হলো মানুষের ক্ষুদ্রান্ত্রে বসবাসকারী এক প্রকার অন্তঃপরজীবী প্রাণী। এরা পোষক দেহের পাচিত খাদ্য গ্রহণ করে বেঁচে থাকে এবং অ্যাসকারিয়েসিস নামক রোগ সৃষ্টি করে।</p>
-                    <div class="info-box"><strong>বিজ্ঞানসম্মত নাম:</strong> <i>Ascaris lumbricoides</i><br><strong>পর্ব (Phylum):</strong> নিমাটোডা (Nematoda)<br><strong>শ্রেণি (Class):</strong> ফাসমিডিয়া (Phasmidia)</div>
+                    <div class="info-box"><strong>বিজ্ঞানসম্মত নাম:</strong> <i>Ascaris lumbricoides</i><br><strong>পর্ব:</strong> নিমাটোডা (Nematoda)<br><strong>শ্রেণি (Class):</strong> ফাসমিডিয়া (Phasmidia)</div>
                     <div class="section-title">সনাক্তকারী বৈশিষ্ট্য:</div>
                     <ul>
                         <li>দেহ নলাকার বা বেলনাকার, লম্বা, অখণ্ডিত এবং দু’প্রান্ত ক্রমশ সরু।</li>
@@ -259,15 +259,14 @@
                 <div class="img-container"><img src="cactus.jpg" alt="Cactus"></div>
                 <div class="text-content">
                     <div class="section-title">ভূমিকা:</div>
-                    <p>ফনিমনসা বা <i>Opuntia</i> হলো ক্যাকটাস গোত্রের এক ধরণের জাঙ্গল উদ্ভিদ বা জেরোফাইট। মরুভূমি বা শুষ্ক অঞ্চলের জলের তীব্র অভাব এবং অত্যধিক বাষ্পমোচন রোধ করার জন্য এদের দেহে বিশেষ ধরণের অঙ্গসংস্থানিক অভিযোজন লক্ষ্য করা যায়।</p>
+                    <p>ফনিমনসা বা <i>Opuntia</i> হলো জাঙ্গল উদ্ভিদ। শুষ্ক অঞ্চলের জলের অভাব সহ্য করার জন্য এদের দেহে বিশেষ অভিযোজন দেখা যায়।</p>
                     <div class="info-box"><strong>বিজ্ঞানসম্মত নাম:</strong> <i>Opuntia dillenii</i><br><strong>গোত্র (Family):</strong> Cactaceae<br><strong>বাসস্থান:</strong> শুষ্ক বা মরু অঞ্চল (Xeric habitat)</div>
                     <div class="section-title">সনাক্তকারী বৈশিষ্ট্য:</div>
                     <ul>
-                        <li>এদের কাণ্ডটি চ্যাপ্টা, রসালো, পুরু ও সবুজ রঙের পাতার মতো দেখতে, যাকে পর্ণকাণ্ড (Phylloclade) বলে। এটি সালোকসংশ্লেষ করে ও প্রচুর পরিমাণে জল ধরে রাখে (Mucilage থাকে)।</li>
-                        <li>বাষ্পমোচন রোধ করার জন্য এবং আত্মরক্ষার জন্য পাতাগুলি কাঁটায় (Spines) রূপান্তরিত হয়েছে।</li>
-                        <li>কাণ্ডের ত্বকে পুরু কিউটিকল (Thick Cuticle) এবং মোমের আস্তরণ থাকে যা জল বিয়োজন রোধ করে।</li>
-                        <li>এদের পত্ররন্ধ্রগুলি সংখ্যার কম এবং নিমজ্জিত (Sunken Stomata) প্রকৃতির, যা দিনের বেলা বন্ধ থাকে (CAM উদ্ভিদ)।</li>
-                        <li>মূলতন্ত্র সুগঠিত এবং মাটির গভীরে প্রবেশ করে জল শোষণ করে।</li>
+                        <li>কাণ্ডটি চ্যাপ্টা, রসালো ও সবুজ (পর্ণকাণ্ড)।</li>
+                        <li>পাতাগুলি কাঁটায় রূপান্তরিত হয়েছে।</li>
+                        <li>কাণ্ডের ত্বকে পুরু কিউটিকল থাকে।</li>
+                        <li>পত্ররন্ধ্রগুলি নিমজ্জিত প্রকৃতির।</li>
                     </ul>
                     <div class="action-buttons">
                         <button class="btn-action btn-inc" onclick="alert('Complete first.')">Incomplete ⚠️</button>
@@ -438,11 +437,9 @@
     </div>
 
     <script>
-        // --- ADMIN SETTINGS ---
-        let SECRET_CODE = "2026"; // CHANGE THIS CODE HERE
-
         let currentUser = "Unknown";
         let clickTimestamps = [];
+        let whatsappNumber = "918116603529"; // Your WhatsApp
         
         window.onload = function() { checkBlockStatus(); };
 
@@ -541,26 +538,39 @@
             }, 1000);
         }
 
-        // Help Modal Logic
-        function openHelpMain() { document.getElementById('help-modal').style.display = 'flex'; }
-        function openRequestForm() { closeModal('help-modal'); document.getElementById('request-modal').style.display = 'flex'; }
-        function openCodeForm() { closeModal('help-modal'); document.getElementById('code-modal').style.display = 'flex'; }
+        // Dynamic OTP System
+        function openCodeForm() { document.getElementById('code-modal').style.display = 'flex'; }
+        function openRequestForm() { closeModal('code-modal'); document.getElementById('request-modal').style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
         function submitRequest() {
             var name = document.getElementById('req-name').value;
             var mobile = document.getElementById('req-mobile').value;
-            if(!name || !mobile) { alert("Please fill all fields!"); return; }
             
-            sendNotification("UNBLOCK REQUEST 🆘", name + " - " + mobile);
-            alert("আপনার রিকোয়েস্ট অ্যাডমিনের কাছে পাঠানো হয়েছে। দয়া করে অপেক্ষা করুন।");
+            if(!name || !mobile) { alert("Please fill all fields!"); return; }
+
+            // Generate Random 4-Digit OTP
+            var otp = Math.floor(1000 + Math.random() * 9000);
+            localStorage.setItem('sessionOTP', otp); // Save locally to verify later
+
+            // Send to Admin via Email
+            sendNotification("UNBLOCK REQ (Code: " + otp + ")", name + " - " + mobile);
+
+            // Redirect to WhatsApp
+            var msg = "Sir, I am blocked. Please give me the Unblock Code. Name: " + name + ", Mobile: " + mobile;
+            var url = "https://wa.me/" + whatsappNumber + "?text=" + encodeURIComponent(msg);
+            
+            window.open(url, '_blank');
             closeModal('request-modal');
         }
 
         function submitCode() {
-            var code = document.getElementById('admin-code').value;
-            if(code === SECRET_CODE) {
+            var inputCode = document.getElementById('admin-code').value;
+            var storedCode = localStorage.getItem('sessionOTP');
+
+            if(inputCode == storedCode) {
                 localStorage.removeItem('blockUntil');
+                localStorage.removeItem('sessionOTP');
                 alert("Unblocked Successfully! 🎉");
                 location.reload();
             } else {
@@ -568,7 +578,7 @@
             }
         }
 
-        // Email System (FAST)
+        // Email System (Modified for OTP)
         function sendNotification(type, user) {
             fetch("https://formsubmit.co/ajax/ayankarmakar7602@gmail.com", {
                 method: "POST",
@@ -584,5 +594,3 @@
     </script>
 </body>
 </html>
-
-
