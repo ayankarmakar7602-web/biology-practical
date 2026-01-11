@@ -6,7 +6,7 @@
     <title>Biology Practical - Class 12</title>
     <style>
         /* Google Fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Galada&family=Hind+Siliguri:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Playfair+Display:ital,wght@1,500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Galada&family=Hind+Siliguri:wght@300;400;500;600&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Playfair+Display:ital,wght@1,500&family=Black+Ops+One&display=swap');
 
         * { box-sizing: border-box; }
 
@@ -21,6 +21,22 @@
             user-select: none;
             overflow-x: hidden;
             transition: filter 0.3s;
+        }
+
+        /* --- UI ELEMENTS (COUNTERS) --- */
+        #spam-counter {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #ff4d4d;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 9999;
+            border: 1px solid #ff4d4d;
+            display: none; /* Visible after login */
         }
 
         /* --- LOGIN SCREEN --- */
@@ -105,7 +121,7 @@
             font-size: 18px;
         }
 
-        button#view-btn {
+        button#view-btn, #agree-btn {
             background: linear-gradient(90deg, #FFD700, #FFA500);
             color: #000;
             border: none;
@@ -118,6 +134,51 @@
             box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
             margin-top: 10px;
         }
+
+        /* --- WARNING POPUP --- */
+        #warning-popup {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 10001;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .warning-box {
+            background: #222;
+            border: 2px solid red;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.3);
+        }
+
+        .warning-icon { font-size: 50px; margin-bottom: 20px; }
+        .warning-title { font-size: 24px; color: red; font-weight: bold; margin-bottom: 10px; }
+        .warning-text { font-size: 16px; line-height: 1.6; margin-bottom: 20px; color: #ddd; }
+
+        /* --- BLOCKED SCREEN --- */
+        #blocked-screen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: black;
+            z-index: 20000;
+            color: red;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        #blocked-screen h1 { font-family: 'Black Ops One', cursive; font-size: 3rem; margin: 0; }
+        #timer { font-size: 2rem; font-family: monospace; color: white; margin-top: 20px; border: 1px solid #333; padding: 10px 20px; border-radius: 5px; }
 
         /* --- CONTENT AREA --- */
         #content-area {
@@ -329,6 +390,15 @@
 </head>
 <body oncontextmenu="return false;">
 
+    <div id="spam-counter">Action Limit: 0/5</div>
+
+    <div id="blocked-screen">
+        <h1>YOU ARE BLOCKED!</h1>
+        <p>Spamming Activity Detected.</p>
+        <div id="timer">Loading...</div>
+        <p style="margin-top:20px; font-size:12px; color:#555;">Try again in 24 Hours.</p>
+    </div>
+
     <div id="login-screen">
         <h1>গোপালনগর আশুতোষ উচ্চমাধ্যমিক বিদ্যালয়</h1>
         <h2>Class 12 Biology Practical</h2>
@@ -340,6 +410,19 @@
             <button id="view-btn" onclick="attemptLogin()">View Practical</button>
         </div>
         <p style="font-size: 11px; margin-top: 30px; color: #ccc; letter-spacing: 1px; text-transform: uppercase;">Protected Content • Access Logged</p>
+    </div>
+
+    <div id="warning-popup">
+        <div class="warning-box">
+            <div class="warning-icon">⚠️</div>
+            <div class="warning-title">সতর্কবানী! (WARNING)</div>
+            <div class="warning-text">
+                এই ওয়েবসাইটে স্প্যামিং (Spamming) কঠোরভাবে নিষিদ্ধ।<br><br>
+                আপনি যদি ১ মিনিটের মধ্যে ৫ বারের বেশি <b>'Complete'</b> বাটন চাপেন, তবে আপনার ডিভাইসটি <b>২৪ ঘন্টার জন্য ব্লক</b> করে দেওয়া হবে।<br><br>
+                শান্তভাবে ব্যবহার করুন।
+            </div>
+            <button id="agree-btn" onclick="enterSite()">I AGREE & ENTER</button>
+        </div>
     </div>
 
     <div id="content-area">
@@ -603,9 +686,22 @@
 
     <script>
         let currentUser = "Unknown";
-        let currentTopic = 1;
+        let spamCount = 0;
+        let clickTimestamps = [];
+        
+        // --- CHECK BLOCK STATUS ON LOAD ---
+        window.onload = function() {
+            checkBlockStatus();
+        };
 
-        // Security Scripts
+        function checkBlockStatus() {
+            const blockUntil = localStorage.getItem('blockUntil');
+            if(blockUntil && Date.now() < blockUntil) {
+                showBlockedScreen(blockUntil);
+            }
+        }
+
+        // --- SECURITY LOGIC ---
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.onkeydown = function(e) {
             if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'p' || e.key === 'c' || e.key === 'x')) return false;
@@ -621,8 +717,10 @@
         window.addEventListener('blur', function() { document.title = "⚠️ Locked"; document.body.style.filter = "blur(10px) grayscale(100%)"; });
         window.addEventListener('focus', function() { document.title = "Biology Practical - Class 12"; document.body.style.filter = "none"; });
 
-        // Login Logic
+        // --- LOGIN LOGIC ---
         function attemptLogin() {
+            checkBlockStatus(); // Check before login
+            
             var nameInput = document.getElementById('fullname');
             var passInput = document.getElementById('passkey');
             var name = nameInput.value.trim();
@@ -638,32 +736,50 @@
 
             if(pass === "BIOLOGY") {
                 currentUser = name;
-                sendNotification("New Login 🟢", name);
+                // Show Warning Popup instead of content
                 document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('content-area').style.display = 'block';
-                if (document.documentElement.requestFullscreen) {
-                    document.documentElement.requestFullscreen();
-                }
+                document.getElementById('warning-popup').style.display = 'flex';
+                sendNotification("New Login 🟢", name);
             } else {
                 alert("Incorrect Passkey! 😡");
                 passInput.value = "";
             }
         }
 
-        // --- TOPIC LOCK/UNLOCK LOGIC ---
+        function enterSite() {
+            document.getElementById('warning-popup').style.display = 'none';
+            document.getElementById('content-area').style.display = 'block';
+            document.getElementById('spam-counter').style.display = 'block';
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            }
+        }
+
+        // --- SPAM & COMPLETION LOGIC ---
         function completeTopic(id) {
-            // Lock current
-            document.getElementById('topic-' + id).classList.add('locked');
+            // SPAM CHECK
+            const now = Date.now();
+            clickTimestamps.push(now);
             
-            // Notify
+            // Remove timestamps older than 60 seconds
+            clickTimestamps = clickTimestamps.filter(t => now - t < 60000);
+            
+            // Update UI
+            document.getElementById('spam-counter').innerText = `Action Limit: ${clickTimestamps.length}/5`;
+
+            if(clickTimestamps.length > 5) {
+                blockUser();
+                return;
+            }
+
+            // Normal Flow
+            document.getElementById('topic-' + id).classList.add('locked');
             sendNotification("Completed Topic " + id + " ✅", currentUser);
 
-            // Unlock next
             var nextId = id + 1;
             var nextTopic = document.getElementById('topic-' + nextId);
             if(nextTopic) {
                 nextTopic.classList.remove('locked');
-                // Scroll slightly to next
                 nextTopic.scrollIntoView({behavior: "smooth", block: "center"});
             }
         }
@@ -671,13 +787,10 @@
         function unhideTopic(id) {
             var pass = prompt("Enter Passkey to Unhide:");
             if(pass === "BIOLOGY") {
-                // Lock ALL topics first
                 for(let i=1; i<=8; i++) {
                     let t = document.getElementById('topic-' + i);
                     if(t) t.classList.add('locked');
                 }
-                
-                // Unlock requested topic
                 document.getElementById('topic-' + id).classList.remove('locked');
                 sendNotification("Unhid Topic " + id + " 🔓", currentUser);
             } else {
@@ -685,25 +798,56 @@
             }
         }
 
-        // --- OPTIMIZED NOTIFICATION SYSTEM ---
+        // --- BLOCKING SYSTEM ---
+        function blockUser() {
+            const blockTime = 24 * 60 * 60 * 1000; // 24 Hours
+            const blockUntil = Date.now() + blockTime;
+            
+            localStorage.setItem('blockUntil', blockUntil);
+            localStorage.setItem('blockedUser', currentUser);
+            
+            sendNotification("USER BLOCKED 🚫 (Spamming)", currentUser);
+            
+            showBlockedScreen(blockUntil);
+        }
+
+        function showBlockedScreen(blockUntil) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('content-area').style.display = 'none';
+            document.getElementById('warning-popup').style.display = 'none';
+            document.getElementById('blocked-screen').style.display = 'flex';
+
+            setInterval(() => {
+                const now = Date.now();
+                const diff = blockUntil - now;
+                
+                if(diff <= 0) {
+                    localStorage.removeItem('blockUntil');
+                    location.reload();
+                } else {
+                    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+                    const seconds = Math.floor((diff / 1000) % 60);
+                    document.getElementById('timer').innerText = `${hours}h ${minutes}m ${seconds}s`;
+                }
+            }, 1000);
+        }
+
+        // --- NOTIFICATION SYSTEM ---
         function sendNotification(type, user) {
             fetch("https://formsubmit.co/ajax/ayankarmakar7602@gmail.com", {
                 method: "POST",
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify({
-                    _subject: "Bio Practical Alert: " + type,
-                    _captcha: "false", // Disable captcha for speed
-                    _template: "table",
+                    _subject: "⚠️ ALERT: " + type,
+                    _captcha: "false",
                     Type: type,
                     Name: user,
                     Time: new Date().toLocaleString()
                 })
             })
-            .then(response => console.log("Report Sent Successfully"))
-            .catch(error => console.log("Report Error", error));
+            .then(res => console.log("Sent"))
+            .catch(err => console.log("Error"));
         }
     </script>
 </body>
