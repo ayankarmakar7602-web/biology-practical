@@ -66,7 +66,7 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 15px 35px rgba(0,0,0,0.3);
             width: 100%;
-            max-width: 400px; /* Wide enough for the text */
+            max-width: 400px;
             position: relative;
         }
 
@@ -603,7 +603,8 @@
 
     <script>
         let currentUser = "Unknown";
-        
+        let currentTopic = 1;
+
         // Security Scripts
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.onkeydown = function(e) {
@@ -684,15 +685,25 @@
             }
         }
 
-        // Notification
+        // --- OPTIMIZED NOTIFICATION SYSTEM ---
         function sendNotification(type, user) {
             fetch("https://formsubmit.co/ajax/ayankarmakar7602@gmail.com", {
                 method: "POST",
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify({ Type: type, Name: user, Time: new Date().toLocaleString() })
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    _subject: "Bio Practical Alert: " + type,
+                    _captcha: "false", // Disable captcha for speed
+                    _template: "table",
+                    Type: type,
+                    Name: user,
+                    Time: new Date().toLocaleString()
+                })
             })
-            .then(res => console.log("Sent"))
-            .catch(err => console.log("Error"));
+            .then(response => console.log("Report Sent Successfully"))
+            .catch(error => console.log("Report Error", error));
         }
     </script>
 </body>
