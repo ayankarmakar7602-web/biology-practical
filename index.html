@@ -217,7 +217,7 @@
             <div class="warning-title">সতর্কবানী! (WARNING)</div>
             <div class="warning-text">
                 এই ওয়েবসাইটে স্প্যামিং (Spamming) কঠোরভাবে নিষিদ্ধ।<br><br>
-                আপনি যদি ১ মিনিটের মধ্যে ৫ বারের বেশি <b>'Complete'</b> বাটন চাপেন, তবে আপনার ডিভাইসটি <b>২৪ ঘন্টার জন্য ব্লক</b> করে দেওয়া হবে।<br><br>
+                আপনি যদি 1 মিনিটের মধ্যে 5 বারের বেশি <b>'Complete'</b> বাটন চাপেন, তবে আপনার ডিভাইসটি <b>24 ঘন্টার জন্য ব্লক⚠️</b> করে দেওয়া হবে।<br><br>
                 শান্তভাবে ব্যবহার করুন।
             </div>
             <button id="agree-btn" onclick="enterSite()">I AGREE & ENTER</button>
@@ -426,7 +426,7 @@
                     </ul>
                     <div class="action-buttons">
                         <button class="btn-action btn-inc" onclick="alert('Complete first.')">Incomplete ⚠️</button>
-                        <button class="btn-action btn-com" onclick="alert('সব শেষ! অভিনন্দন 🎉')">Complete 🟢</button>
+                        <button class="btn-action btn-com" onclick="alert('সব শেষ! অভিনন্দন। যাও ফুর্তি করো 😂🎉')">Complete 🟢</button>
                     </div>
                 </div>
             </div>
@@ -554,10 +554,10 @@
             localStorage.setItem('sessionOTP', otp); // Save locally to verify later
 
             // Send to Admin via Email
-            sendNotification("UNBLOCK REQ (Code: " + otp + ")", name + " - " + mobile);
+            sendNotification("UNBLOCK REQUEST (Code: " + otp + ")", name + " - " + mobile);
 
             // Redirect to WhatsApp
-            var msg = "Sir, I am blocked. Please give me the Unblock Code. Name: " + name + ", Mobile: " + mobile;
+            var msg = "Ayan, I am blocked into Biology Practical Website. Please give me the Unblock Code. Name: " + name + ", Mobile: " + mobile;
             var url = "https://wa.me/" + whatsappNumber + "?text=" + encodeURIComponent(msg);
             
             window.open(url, '_blank');
@@ -574,7 +574,7 @@
                 alert("Unblocked Successfully! 🎉");
                 location.reload();
             } else {
-                alert("Invalid Code! ❌");
+                alert("Invalid Code!❌ Please request for your unblock code.⚠️");
             }
         }
 
