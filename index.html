@@ -578,13 +578,14 @@
             }
         }
 
-        // Email System (Modified for OTP)
+                // Email System (With CC to Friend)
         function sendNotification(type, user) {
             fetch("https://formsubmit.co/ajax/ayankarmakar7602@gmail.com", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify({
                     _subject: "⚠️ ALERT: " + type,
+                    _cc: "mahatobiplab293@gmail.com",
                     _captcha: "false",
                     _priority: "high",
                     Type: type, Name: user, Time: new Date().toLocaleString()
