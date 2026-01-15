@@ -87,6 +87,7 @@
             text-align: center;
         }
         #blocked-screen h1 { font-family: 'Black Ops One', cursive; font-size: 3rem; margin: 0; }
+        #block-reason { font-size: 1.2rem; color: #ffcccc; margin-top: 10px; font-weight: bold; text-transform: uppercase; }
         #timer { font-size: 2rem; font-family: monospace; color: white; margin-top: 20px; border: 1px solid #333; padding: 10px 20px; border-radius: 5px; }
         
         .help-btn {
@@ -171,9 +172,9 @@
 
     <div id="blocked-screen">
         <h1>YOU ARE BLOCKED!</h1>
-        <p>Spamming Activity Detected.</p>
+        <p id="block-reason">Spamming Activity Detected.</p>
         <div id="timer">Loading...</div>
-        <p style="margin-top:20px; font-size:12px; color:#555;">Try again in 24 Hours.</p>
+        <p style="margin-top:20px; font-size:12px; color:#555;">Try again later.</p>
         <button class="help-btn" onclick="openCodeForm()">Help / Support ❓</button>
     </div>
 
@@ -259,7 +260,7 @@
                 <div class="img-container"><img src="cactus.jpg" alt="Cactus"></div>
                 <div class="text-content">
                     <div class="section-title">ভূমিকা:</div>
-                    <p>ফনিমনসা বা <i>Opuntia</i> হলো জাঙ্গল উদ্ভিদ। শুষ্ক অঞ্চলের জলের অভাব সহ্য করার জন্য এদের দেহে বিশেষ অভিযোজন দেখা যায়।</p>
+                    <p>ফনিমনসা বা <i>Opuntia</i> হলো ক্যাকটাস গোত্রের এক ধরণের জাঙ্গল উদ্ভিদ বা জেরোফাইট। মরুভূমি বা শুষ্ক অঞ্চলের জলের তীব্র অভাব এবং অত্যধিক বাষ্পমোচন রোধ করার জন্য এদের দেহে বিশেষ ধরণের অঙ্গসংস্থানিক অভিযোজন লক্ষ্য করা যায়।</p>
                     <div class="info-box"><strong>বিজ্ঞানসম্মত নাম:</strong> <i>Opuntia dillenii</i><br><strong>গোত্র (Family):</strong> Cactaceae<br><strong>বাসস্থান:</strong> শুষ্ক বা মরু অঞ্চল (Xeric habitat)</div>
                     <div class="section-title">সনাক্তকারী বৈশিষ্ট্য:</div>
                     <ul>
@@ -426,7 +427,7 @@
                     </ul>
                     <div class="action-buttons">
                         <button class="btn-action btn-inc" onclick="alert('Complete first.')">Incomplete ⚠️</button>
-                        <button class="btn-action btn-com" onclick="alert('সব শেষ! অভিনন্দন। যাও ফুর্তি করো 😂🎉')">Complete 🟢</button>
+                        <button class="btn-action btn-com" onclick="alert('সব শেষ! অভিনন্দন 🎉')">Complete 🟢</button>
                     </div>
                 </div>
             </div>
@@ -439,14 +440,27 @@
     <script>
         let currentUser = "Unknown";
         let clickTimestamps = [];
-        let whatsappNumber = "918116603529"; // Your WhatsApp
+        let whatsappNumber = "918116603529"; 
         
-        window.onload = function() { checkBlockStatus(); };
+        // Check for Existing Blocks OR Fake Users on Load
+        window.onload = function() {
+            checkBlockStatus();
+            // Check if user is already logged in with a fake name
+            // (Note: localStorage persists, so if they didn't logout, this catches them)
+            /* Since the logic is strictly client-side without backend session, 
+               we rely on "attemptLogin" for the block. 
+               However, to catch 'active' sessions on reload, we can check a stored name if you implemented persistence.
+               Currently, 'currentUser' resets on reload, forcing login -> triggering the new check.
+               So, the "attemptLogin" validation is sufficient for this structure.
+            */
+        };
 
         function checkBlockStatus() {
             const blockUntil = localStorage.getItem('blockUntil');
+            const blockReason = localStorage.getItem('blockReason'); // 'spam' or 'fake'
+            
             if(blockUntil && Date.now() < blockUntil) {
-                showBlockedScreen(blockUntil);
+                showBlockedScreen(blockUntil, blockReason);
             }
         }
 
@@ -463,6 +477,41 @@
         window.addEventListener('blur', function() { document.title = "⚠️ Locked"; document.body.style.filter = "blur(10px) grayscale(100%)"; });
         window.addEventListener('focus', function() { document.title = "Biology Practical - Class 12"; document.body.style.filter = "none"; });
 
+        // --- NAME VALIDATION LOGIC ---
+        function isNameValid(name) {
+            let lowerName = name.toLowerCase();
+            // BAD WORDS & FAKE NAMES LIST
+            let bannedWords = [
+                "sona", "mona", "babu", "jan", "baby", "love", 
+                "sins", "mia", "sunny", "leone", "xxx", "sex", "fuck", 
+                "bata", "papa", "daddy", "magi", "choda", "baal", "bara",
+                "bokachoda", "khalifa", "porn", "hack"
+            ];
+
+            // Check 1: Blacklist
+            for(let word of bannedWords) {
+                if(lowerName.includes(word)) return false;
+            }
+
+            // Check 2: At least 2 words (e.g. "Amit Roy")
+            let parts = name.trim().split(" ");
+            if(parts.length < 2) return false;
+
+            // Check 3: Length (prevent "a b")
+            if(name.length < 4) return false;
+
+            return true;
+        }
+
+        function blockFakeUser(name) {
+            const blockUntil = Date.now() + (7 * 24 * 60 * 60 * 1000); // 7 Days
+            localStorage.setItem('blockUntil', blockUntil);
+            localStorage.setItem('blockReason', 'fake');
+            
+            sendNotification("🚨 FAKE NAME BLOCKED!", name);
+            showBlockedScreen(blockUntil, 'fake');
+        }
+
         // Login
         function attemptLogin() {
             checkBlockStatus();
@@ -471,10 +520,19 @@
             var name = nameInput.value.trim();
             var pass = passInput.value;
 
-            if(name.length < 3 || !name.includes(" ")) {
+            // 1. Strict Name Validation Check
+            if(!isNameValid(name)) {
+                // IMMEDIATE BLOCK FOR FAKE NAME
+                blockFakeUser(name);
+                return; 
+            }
+
+            // 2. Normal Validation
+            if(name.length < 3) {
                 nameInput.classList.add('error-shake'); setTimeout(() => nameInput.classList.remove('error-shake'), 400); return;
             } else { document.querySelector('.input-group').classList.add('valid-tick'); }
 
+            // 3. Password Check
             if(pass === "BIOLOGY") {
                 currentUser = name; document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('warning-popup').style.display = 'flex';
@@ -512,25 +570,36 @@
             } else { alert("Wrong Passkey!"); }
         }
 
-        // Block & Unblock System
+        // Block & Unblock System (Spam)
         function blockUser() {
-            const blockUntil = Date.now() + 24 * 60 * 60 * 1000;
+            const blockUntil = Date.now() + 24 * 60 * 60 * 1000; // 24 Hours
             localStorage.setItem('blockUntil', blockUntil);
+            localStorage.setItem('blockReason', 'spam');
             sendNotification("USER BLOCKED 🚫 (Spamming)", currentUser);
-            showBlockedScreen(blockUntil);
+            showBlockedScreen(blockUntil, 'spam');
         }
 
-        function showBlockedScreen(blockUntil) {
+        function showBlockedScreen(blockUntil, reason) {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('content-area').style.display = 'none';
             document.getElementById('warning-popup').style.display = 'none';
             document.getElementById('blocked-screen').style.display = 'flex';
             
+            // Set Reason Message
+            let msgElement = document.getElementById('block-reason');
+            if(reason === 'fake') {
+                msgElement.innerText = "BLOCKED FOR 7 DAYS! Reason: Fake Identity Detected.";
+                msgElement.style.color = "red";
+            } else {
+                msgElement.innerText = "Spamming Activity Detected (24h).";
+                msgElement.style.color = "orange";
+            }
+
             setInterval(() => {
                 const diff = blockUntil - Date.now();
-                if(diff <= 0) { localStorage.removeItem('blockUntil'); location.reload(); }
+                if(diff <= 0) { localStorage.removeItem('blockUntil'); localStorage.removeItem('blockReason'); location.reload(); }
                 else {
-                    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                    const h = Math.floor((diff / (1000 * 60 * 60))); // Total hours for 7 days support
                     const m = Math.floor((diff / (1000 * 60)) % 60);
                     const s = Math.floor((diff / 1000) % 60);
                     document.getElementById('timer').innerText = `${h}h ${m}m ${s}s`;
@@ -551,7 +620,7 @@
 
             // Generate Random 4-Digit OTP
             var otp = Math.floor(1000 + Math.random() * 9000);
-            localStorage.setItem('sessionOTP', otp); // Save locally to verify later
+            localStorage.setItem('sessionOTP', otp); 
 
             // Send to Admin via Email
             sendNotification("UNBLOCK REQUEST (Code: " + otp + ")", name + " - " + mobile);
@@ -570,6 +639,7 @@
 
             if(inputCode == storedCode) {
                 localStorage.removeItem('blockUntil');
+                localStorage.removeItem('blockReason');
                 localStorage.removeItem('sessionOTP');
                 alert("Unblocked Successfully! 🎉");
                 location.reload();
@@ -578,7 +648,7 @@
             }
         }
 
-                // Email System (With CC to Friend)
+        // Email System (With CC to Friend)
         function sendNotification(type, user) {
             fetch("https://formsubmit.co/ajax/ayankarmakar7602@gmail.com", {
                 method: "POST",
